@@ -3,23 +3,22 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../Config/firebase-config";
 import { useGetUserInfo } from "./useGetUserInfo";
 
-
 export const useAddTransaction = () => {
   const { userID } = useGetUserInfo();
   const transactionCollectionRef = collection(db, "transactions");
-  const addTransaction = async (
+  const addTransaction = async ({
     description,
     transactionAmount,
-    transactionType
-  ) => {
+    transactionType,
+  }) => {
     await addDoc(transactionCollectionRef, {
       userID,
       description,
       transactionAmount,
       transactionType,
-      createAt: serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
   };
 
-  return <div>useAddTransaction</div>;
+  return { addTransaction };
 };
