@@ -8,6 +8,7 @@ export const useGetTransactions = () => {
   const { userID } = useGetUserInfo();
   const transactionCollectionRef = collection(db, "transactions");
   const getTransactions = async () => {
+     let unsubscribe;
     try {
       const queryTransactions = query(
         transactionCollectionRef,
@@ -15,15 +16,28 @@ export const useGetTransactions = () => {
         orderBy("createdAt")
       );
 
-      onSnapshot(queryTransactions, (onSnapshot) => {
-        onSnapshot.forEach((doc) => {
+     unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
+
+        let docs = [];
+
+        snapshot.forEach((doc) => {
             const data = doc.data();
-        })
-      })
+            const id = doc.id;
+
+            docs.push({...data, id})
+        });
+
+        setTransactions(docs);
+      });
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
+    return () => unsubscribe();
   };
+
+  useEffect(() => {
+    getTransactions();
+  }, []);
 
   return { transactions };
 };
