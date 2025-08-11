@@ -51,8 +51,8 @@ export const useGetTransactions = () => {
 
         setTransactionTotal({
           balance,
-          totalIncome,
-          totalExpense
+          expense: totalExpense,
+          income: totalIncome,
         });
 
       });
@@ -66,5 +66,5 @@ export const useGetTransactions = () => {
     getTransactions();
   }, []);
 
-  return { transactions };
+  return { transactions, transactionTotal };
 };

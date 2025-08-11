@@ -12,8 +12,10 @@ export const ExpenseTracker = () => {
   const { transactions, transactionTotal } = useGetTransactions();
   const { name, profilePhoto } = useGetUserInfo();
   const [description, setDescription] = useState("");
-  const [transactionAmount, setTransactionAmount] = useState(0);
+  const [transactionAmount, setTransactionAmount] = useState("");
   const [transactionType, setTransactionType] = useState("expense");
+
+  const { balance, income, expense } = transactionTotal;
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -22,13 +24,16 @@ export const ExpenseTracker = () => {
       transactionAmount,
       transactionType,
     });
-  };
 
+    setDescription("");
+    setTransactionAmount("");
+  };
+ 
   const signOutUser = async () => {
     try {
       await signOut(auth);
       localStorage.clear();
-      navigate('/');
+      navigate("/");
     } catch (err) {
       console.error(err);
     }
@@ -39,34 +44,33 @@ export const ExpenseTracker = () => {
       {" "}
       <div className="expense-tracker">
         <div className="container">
-          <h1>
-            {" "}
-            {name}'s Expense Tracker
-          </h1>
+          <h1> {name}'s Expense Tracker</h1>
           <div className="balance">
             <h3>Your Balance</h3>
-            <h2>balance</h2>
+            {balance >= 0 ? <h2>${balance}</h2> : <h2>-${balance * -1}</h2>}
           </div>
           <div className="summary">
             <div className="income">
               <h4>Income</h4>
-              <p>$0.00</p>
+              <p>${income}</p>
             </div>
             <div className="expenses">
               <h4>Expenses</h4>
-              <p>$0.00</p>
+              <p>${expense}</p>
             </div>
           </div>
           <form onSubmit={onSubmit} className="add-transaction">
             <input
               type="text"
               placeholder="Transaction Name"
+              value={description}
               required
               onChange={(e) => setDescription(e.target.value)}
             />
             <input
               type="number"
               placeholder="Amount"
+              value={transactionAmount}
               required
               onChange={(e) => setTransactionAmount(e.target.value)}
             />
@@ -87,7 +91,7 @@ export const ExpenseTracker = () => {
             />
             <label htmlFor="income">Income</label>
 
-            <button type="submit">Add Transaction</button>
+            <button type="submit" >Add Transaction</button>
           </form>
         </div>
         {profilePhoto && (
